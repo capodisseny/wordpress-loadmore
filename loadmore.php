@@ -6,20 +6,29 @@ Version: 1.0
 Description: Load more for posts
 */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 
 // load More images
 add_action('wp_ajax_load_posts_by_ajax', 'load_posts_by_ajax_callback');
 add_action('wp_ajax_nopriv_load_posts_by_ajax', 'load_posts_by_ajax_callback');
 
+// $myData = array(
+//     'ajaxurl' => admin_url( 'admin-ajax.php' ),
+// );
+// wp_localize_script( "myScript", "alm_localize", $myData );
 
 // AJAX callback
 function load_posts_by_ajax_callback() {
+
     check_ajax_referer('load_more_posts', 'security');
     $paged = $_POST['page'];
 
     $args = array(
-			'post_parent' => $post->ID,
-			'post_status' => 'inherit',
+			'post_status' => 'publish',
 			'post_type'	=> 'work',
 			'order' => 'DESC',
 			'posts_per_page'	=> 6,
@@ -64,7 +73,7 @@ function load_posts_by_ajax_callback() {
 
 
 					$(".load-text-image").text("No hay más proyectos");
-					$(".load-image").removeClass("js-loadmore");
+					$(".load-image").removeClass("sal_js-loadmore");
 
 
 					})( jQuery );
@@ -91,10 +100,13 @@ var ajaxurl = "<?php echo admin_url( 'admin-ajax.php' ); ?>";
 var page_image = 2;
 
 
+
 jQuery(function($) {
 
 
-	$('body').on('click', '.js-loadmore', function() {
+	$('body').on('click', '.sal_js-loadmore', function() {
+
+		console.log('innnn');
 
 			var scroll = $(document).scrollTop();
 
@@ -105,7 +117,10 @@ jQuery(function($) {
 					};
 
 					$.post(ajaxurl, data_image, function(response) {
-					$('.load-more-container').append(response);
+						console.log(response);
+					var child = $('.sal_js-loadmore-container').find('.sal_js-loadmore-item').first();
+					child.parent().append(response);
+
 					page_image++;
 					});
 
